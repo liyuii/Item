@@ -1,0 +1,53 @@
+# 配置端口
+server:
+  port: 8080
+
+# 配置数据源
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@127.0.0.1:1521/oracle
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    username: liyuii
+    password: liyuii
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/mybatis?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+#    driver-class-name: com.mysql.jdbc.Driver
+#    username: root
+#    password: root
+
+#  freemarker:
+#    template-loader-path: /static/
+#    cache: false
+#    charset: utf-8
+#    check-template-location: true
+#    content-type: text/html
+#    expose-request-attributes: true
+#    expose-session-attributes: true
+#    request-context-attribute: request
+#    suffix: .html
+#    enabled: true
+
+  thymeleaf:
+    prefix: classpath:/static/
+    suffix: .html
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+#  mvc:
+#    view:
+#      suffix: .html
+##      prefix: classpath:/static/
+
+
+# 配置mybatis
+mybatis:
+  mapper-locations: classpath:com/test/dao/*.xml
+
+pagehelper:
+  helper-dialect: oracle
+  reasonable: true
+  support-methods-arguments: true
+
+#http://localhost:8080/swagger-ui.html

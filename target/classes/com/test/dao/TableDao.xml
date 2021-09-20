@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.test.dao.TableDao">
+
+    <resultMap id="FormMap" type="com.test.entity.Form" >
+        <id column="FORM_ID" property="formId" jdbcType="VARCHAR" />
+        <result column="PUBLICITY_NAME" property="publicityName" jdbcType="VARCHAR" />
+        <result column="BID_NAME" property="bidName" jdbcType="VARCHAR" />
+        <result column="PUBLICITY_TYPE" property="publicityType" jdbcType="VARCHAR" />
+        <result column="BID_MANAGER" property="bidManager" jdbcType="VARCHAR" />
+        <result column="MANAGER_ID" property="managerId" jdbcType="VARCHAR" />
+        <result column="CERTIFICATE_ID" property="certificateId" jdbcType="VARCHAR" />
+        <result column="TITLE_CERTIFICATE" property="titleCertificate" jdbcType="VARCHAR" />
+        <result column="BID_OPENTIME" property="bidOpenTime" jdbcType="DATE" />
+        <result column="PUBLICITY_STARTTIME" property="publicityStartTime" jdbcType="DATE" />
+        <result column="PUBLICITY_ENDTIME" property="publicityEndTime" jdbcType="DATE" />
+        <result column="ENTRUST_MONEY" property="entrustMoney" jdbcType="DECIMAL" />
+        <result column="PUBLICITY_CONTENT" property="publicityContent" jdbcType="VARCHAR" />
+<!--        <result column="FORM_FILE" property="formFile" jdbcType="VARCHAR" />-->
+        <result column="OPENTIME_STR" property="openTimeStr" jdbcType="VARCHAR" />
+        <result column="STARTTIME_STR" property="startTimeStr" jdbcType="VARCHAR" />
+        <result column="ENDTIME_STR" property="endTimeStr" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="tablePage" resultMap="FormMap">
+        select * from TABLE_FORM
+    </select>
+
+    <insert id="addTable" parameterType="com.test.entity.Form">
+        insert into TABLE_FORM(FORM_ID,PUBLICITY_NAME,BID_NAME,PUBLICITY_TYPE,BID_MANAGER,MANAGER_ID,CERTIFICATE_ID,TITLE_CERTIFICATE,BID_OPENTIME,PUBLICITY_STARTTIME,PUBLICITY_ENDTIME,ENTRUST_MONEY,PUBLICITY_CONTENT,OPENTIME_STR,STARTTIME_STR,ENDTIME_STR)
+        values(
+                  #{formId,jdbcType=VARCHAR},
+                  #{publicityName,jdbcType=VARCHAR},
+                  #{bidName,jdbcType=VARCHAR},
+                  #{publicityType,jdbcType=VARCHAR},
+                  #{bidManager,jdbcType=VARCHAR},
+                  #{managerId,jdbcType=VARCHAR},
+                  #{certificateId,jdbcType=VARCHAR},
+                  #{titleCertificate,jdbcType=VARCHAR},
+                  #{bidOpenTime,jdbcType=DATE},
+                  #{publicityStartTime,jdbcType=DATE},
+                  #{publicityEndTime,jdbcType=DATE},
+                  #{entrustMoney,jdbcType=DECIMAL},
+                  #{publicityContent,jdbcType=VARCHAR},
+--                   #{formFile,jdbcType=VARCHAR},
+                  #{openTimeStr,jdbcType=VARCHAR},
+                  #{startTimeStr,jdbcType=VARCHAR},
+                  #{endTimeStr,jdbcType=VARCHAR}
+              )
+    </insert>
+
+    <update id="updateTable" parameterType="com.test.entity.Form">
+        update TABLE_FORM
+        <trim prefix="set" suffixOverrides=",">
+            PUBLICITY_NAME = #{publicityName,jdbcType=VARCHAR},
+            BID_NAME = #{bidName,jdbcType=VARCHAR},
+            PUBLICITY_TYPE = #{publicityType,jdbcType=VARCHAR},
+            BID_MANAGER = #{bidManager,jdbcType=VARCHAR},
+            MANAGER_ID = #{managerId,jdbcType=VARCHAR},
+            CERTIFICATE_ID = #{certificateId,jdbcType=VARCHAR},
+            TITLE_CERTIFICATE = #{titleCertificate,jdbcType=VARCHAR},
+            BID_OPENTIME = #{bidOpenTime,jdbcType=DATE},
+            PUBLICITY_STARTTIME = #{publicityStartTime,jdbcType=DATE},
+            PUBLICITY_ENDTIME = #{publicityEndTime,jdbcType=DATE},
+            ENTRUST_MONEY = #{entrustMoney,jdbcType=DECIMAL},
+            PUBLICITY_CONTENT = #{publicityContent,jdbcType=VARCHAR},
+--             FORM_FILE = #{formFile,jdbcType=VARCHAR},
+            OPENTIME_STR = #{openTimeStr,jdbcType=VARCHAR},
+            STARTTIME_STR = #{startTimeStr,jdbcType=VARCHAR},
+            ENDTIME_STR = #{endTimeStr,jdbcType=VARCHAR}
+        </trim>
+        where FORM_ID = #{formId}
+    </update>
+
+    <delete id="deleteTable" parameterType="java.lang.String">
+        delete from TABLE_FORM where FORM_ID=#{formId}
+    </delete>
+
+    <select id="getTableById" resultMap="FormMap" parameterType="java.lang.String">
+        select * from TABLE_FORM where FORM_ID=#{fid}
+    </select>
+
+</mapper>

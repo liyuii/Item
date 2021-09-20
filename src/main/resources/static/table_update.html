@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymelraf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.easyui.min.js"></script>
+    <link href="/themes/default/easyui.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/js/my97Date/WdatePicker.js"></script>
+    <!-- 富文本编辑器 -->
+    <link rel="stylesheet" href="/kindeditor/themes/default/default.css" type="text/css"/>
+    <script type="text/javascript" src="/kindeditor/kindeditor-all-min.js"></script>
+</head>
+<body>
+
+<form enctype="multipart/form-data" id="form">
+    <input type="hidden" name="formId" id="formId" th:value="${form.formId}">
+    <input type="hidden" name="bidName" id="bidName" th:value="${form.bidName}">
+
+    <table>
+        <tr>
+            <td>公示名称：</td>
+            <td><input type="text" name="publicityName" th:value="${form.publicityName}"></td>
+        </tr>
+        <tr>
+            <td>标段名称：</td>
+            <td>
+                <div name="selects" onclick="SaveCheck()">
+                    <input type="checkbox" name="combox" value="1" >标段1
+                    <input type="checkbox" name="combox" value="2">标段2
+                    <input type="checkbox" name="combox" value="3">标段3
+                </div>
+<!--                <input type="hidden" name="bidName" id="bidName">-->
+            </td>
+        </tr>
+        <tr>
+            <td>公示类型：</td>
+            <td>
+                <select id="publicityType" name="publicityType" th:field="${form.publicityType}">
+                    <option th:selected="${form.publicityType=='0'}" value="1"></option>
+                    <option th:selected="${form.publicityType=='1'}" value="1">正常</option>
+                    <option th:selected="${form.publicityType=='2'}" value="2">不正常</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>招标代理项目经理：</td>
+            <td><input type="text" name="bidManager" th:value="${form.bidManager}"></td>
+        </tr>
+        <tr>
+            <td>项目经理身份证号：</td>
+            <td><input type="text" name="managerId" id="managerId" th:value="${form.managerId}" onblur="verify()"></td>
+        </tr>
+        <tr>
+            <td>证书编号：</td>
+            <td><input type="text" name="certificateId" th:value="${form.certificateId}"></td>
+        </tr>
+        <tr>
+            <td>证书资格：</td>
+            <td><input type="text" name="titleCertificate" th:value="${form.titleCertificate}"></td>
+        </tr>
+        <tr>
+            <td>开标时间：</td>
+            <td>
+                <input type="text" id="openTimeStr" name ="openTimeStr"  class="Wdate" style="float: left;width: 147px;padding-left: 3px;"
+                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" th:value="${form.openTimeStr}"/>
+            </td>
+        </tr>
+        <tr>
+            <td>公示开始时间：</td>
+            <td>
+                <input type="text" id="startTimeStr" name ="startTimeStr"  class="Wdate" style="float: left;width: 147px;padding-left: 3px;"
+                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" th:value="${form.startTimeStr}"/>
+            </td>
+        </tr>
+        <tr>
+            <td>公示结束时间：</td>
+            <td>
+                <input type="text" id="endTimeStr" name ="endTimeStr"  class="Wdate" style="float: left;width: 147px;padding-left: 3px;"
+                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" th:value="${form.endTimeStr}"/>
+            </td>
+        </tr>
+        <tr>
+            <td>委托金额：</td>
+            <td><input type="text" name="entrustMoney" th:value="${form.entrustMoney}"></td>
+        </tr>
+        <tr>
+            <td>否决投标单位及理由：</td>
+            <td>
+                <div class="col-md-10 data editer">
+                    <textarea name="content" style="width:800px;height:400px;visibility:hidden;" th:text="${form.publicityContent}"></textarea>
+                </div>
+                <input type="hidden" name="publicityContent" id="publicityContent">
+            </td>
+        </tr>
+        <tr>
+            <td>附件上传：</td>
+            <td><input type="file" name="myFile"></td>
+        </tr>
+        <tr>
+            <td>已上传附件：</td>
+            <td><p th:text="${form.formFile}"></p></td>
+            <input type="hidden" name="formFile" id="formFile" th:value="${form.formFile}">
+        </tr>
+        <tr>
+            <td><input type="button" value="提交" onclick="sub()"></td>
+        </tr>
+    </table>
+</form>
+
+<script>
+
+    var api = frameElement.api;
+    W = api.opener;
+
+    var editor;
+    KindEditor.ready(function (K) {
+        editor = K.create('textarea[name="content"]', {
+            //否允许浏览服务器已上传文件,默认是false
+            allowFileManager: true
+        });
+    });
+
+    $(function (){
+        //下拉框回显
+        // $("#publicityType").find("option[value='${form.publicityType}']").attr("selected",'selected');
+        //复选框回显
+        var h = $("#bidName").val();
+        console.log(h);
+        var checkArray =h.split(",");
+        //获取所有复选框的值
+        var checkBoxAll = $("input[name='combox']");
+        for(var i=0;i<checkArray.length;i++){
+            //获取所有复选框对象的value属性，然后，用checkArray[i]和他们匹配，如果有，则说明他应被选中
+            $.each(checkBoxAll,function(j,checkbox){
+                //获取复选框的value属性
+                var checkValue=$(checkbox).val();
+                if(checkArray[i]==checkValue){
+                    $(checkbox).attr("checked",true);
+                }
+            })
+        }
+    })
+
+    function verify() {
+        var id = $("#managerId").val();
+        var verify = /^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/;
+        if(verify.test(id)){
+            console.log("正确");
+        }else{
+            alert("请正确输入身份证号！");
+            $("#managerId").val("");
+        }
+    }
+
+    var SaveCheck = function(){
+        var arry = new Array();
+        //循环所有选中的值
+        $('input[name="combox"]:checked').each(function(index, element) {
+            //追加到数组中
+            arry.push($(this).val());
+        });
+        //将数组元素连接起来转化为字符串
+        var arrystr = arry.join(',');
+        //输出到控制台
+        $("#bidName").val(arrystr);
+        console.log("选中值："+ arrystr);
+    }
+
+    function sub() {
+
+        var content = editor.html();
+        // console.log(content);
+        $("#publicityContent").val(content);
+
+        var content = editor.html();
+        // console.log(content);
+        $("#publicityContent").val(content);
+        console.log("sub");
+        let formData = new FormData(document.getElementById('form'));
+        console.log(formData);
+        $.ajax({
+            type : "POST",
+            url : "/modifyTable",
+            data : formData,
+            async: false,//同步上传
+            cache: false,//上传文件无需缓存
+            processData: false,  // 不处理数据
+            contentType: false, // 不设置内容类型
+            //请求成功
+            success : function(result) {
+                if(result.status == "ok"){
+                    console.log("成功");
+                    W.refreshTable();
+                    api.close();
+                }
+                console.log("错误");
+            },
+            //请求失败，包含具体的错误信息
+            error : function(e){
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

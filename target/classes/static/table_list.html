@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.easyui.min.js"></script>
+    <link href="/themes/default/easyui.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/js/lhgdialog4/lhgdialog/lhgdialog.min.js"></script>
+    <script type="text/javascript" src="/js/easyui-lang-zh_CN.js"></script>
+</head>
+<body>
+
+    <div class="oper">
+        <input type="button" class="btn-success" value="添加" onclick="addForm()">
+        <input type="button" class="btn-success" value="修改" onclick="modifyForm()">
+        <input type="button" class="btn-success" value="删除" onclick="deleteForm()">
+    </div>
+
+    <div class="table_main">
+        <div class="dataTableDiv" id="dataTable" style="margin: 0; padding: 0;" >
+            <div id="formInfo"></div>
+        </div>
+    </div>
+
+
+    <script>
+
+        $(function (){
+
+            console.log("test");
+            $("#formInfo").datagrid({
+                title:'表单',
+                // iconCls:'icon-save',
+                // singleSelect: true,
+                striped: true,
+                rownumbers:true,
+                nowrap:false,
+                pagination: true,
+                pageSize: 10,
+                // fitColumns:true,//处理最后多出来一列
+                url:'/getPage',
+                onLoadSuccess:function(data){
+                    console.log(data);
+                },
+                columns:[[
+                    {field:'ck',checkbox:true},
+                    {field:'formId',title:'表单ID',width:150,align:'center'},
+                    {field:'publicityName',title:'公示名称',width:150,align:'center'},
+                    {field:'bidName',title:'标段名称',width:100,align:'center'},
+                    {field:'publicityType',title:'公示类型',width:150,align:'center'},
+                    {field:'bidManager',title:'招标经理',width:150,align:'center'},
+                    {field:'managerId',title:'经理身份证号',width:150,align:'center'},
+                    {field:'certificateId',title:'证书编号',width:150,align:'center'},
+                    {field:'titleCertificate',title:'职业资格',width:150,align:'center'},
+                    {field:'openTimeStr',title:'开标时间',width:150,align:'center'},
+                    {field:'startTimeStr',title:'公示开始时间',width:150,align:'center'},
+                    {field:'endTimeStr',title:'公示结束时间',width:150,align:'center'},
+                    {field:'entrustMoney',title:'委托金额（元）',width:150,align:'center'},
+                    {field:'publicityContent',title:'否决招标单位及理由',width:150,align:'center'},
+                    {field:'formFile',title:'附件',width:150,align:'center'}
+                ]],
+                scrollbarSize:0,//处理最后多出来一列
+            });
+
+            $("#formInfo").datagrid('hideColumn', 'formId');
+        })
+        
+        function addForm() {
+            var url = "/toAddPage";
+            $.dialog({ id:'contentUpload', zIndex:11000, title:'新增',
+                width:'1200px', height:'700px', content:'url:'+url,lock: true,drag:false,min:false,max:false});
+        }
+
+        function modifyForm() {
+            var row = $('#formInfo').datagrid('getSelected');
+            var fid;
+            if (row){
+                fid = row.formId;
+                console.log("修改操作");
+                console.log(fid);
+                var url = "/toUpdatePage?fid="+fid;
+                $.dialog({ id:'contentUpload', zIndex:11000, title:'修改',
+                    width:'1200px', height:'700px', content:'url:'+url,lock: true,drag:false,min:false,max:false});
+            }else{
+                $.dialog.alert("请勾选要操作的用户！");
+                return;
+            }
+        }
+
+        function refreshTable(){
+            $('#formInfo').datagrid('reload');
+        }
+
+        function deleteForm(){
+            var selectedRows = $('#formInfo').datagrid('getSelections');
+            var id = "";
+            if(selectedRows.length == 0){
+                $.dialog.alert("请勾选要操作的用户！");
+                return;
+            }else{
+                for(var i=0;i<selectedRows.length;i++){
+                    id += selectedRows[i].formId + ",";
+                }
+            }
+            console.log(id);
+            $.dialog.confirm("确定要进行删除操作吗？",function (){
+                var url = "/deleteTable";
+                $.ajax({
+                    url:url,
+                    data: {"id": id},
+                    type:"POST",
+                    dataType:"json",
+                    success:function(data){
+                        console.log("已删除");
+                        refreshTable();
+                        // var code = req.code;
+                        // var res_desc = req.message;
+                        // switch (parseInt(code)) {
+                        //     case 0:
+                        //         $.dialog.alert(res_desc);
+                        //         break;
+                        //     case 1:
+                        //         $.dialog.alert(res_desc);
+                        //         refreshTable();
+                        //         break;
+                        // }
+                    }
+
+                });
+            });
+        }
+
+        function formattime(cellval) {
+            if(cellval != null){
+                var year = parseInt(cellval.year) + 1900;
+                var month = (parseInt(cellval.month) + 1);
+                month = month > 9 ? month : ('0' + month);
+                var date = parseInt(cellval.date);
+                date = date > 9 ? date : ('0' + date);
+                var hours = parseInt(cellval.hours);
+                hours = hours > 9 ? hours : ('0' + hours);
+                var minutes = parseInt(cellval.minutes);
+                minutes = minutes > 9 ? minutes : ('0' + minutes);
+                var seconds = parseInt(cellval.seconds);
+                seconds = seconds > 9 ? seconds : ('0' + seconds);
+                var time = year + '-' + month + '-' + date + ' ' + hours + ':' + minutes + ':' + seconds;
+                return time;
+            }
+        }
+
+        // function goSearch(){
+        //
+        //     var pars = {
+        //         "queryName":$("#queryName").val(),
+        //         "queryType":$('input[name="queryType"]:checked').val()
+        //     }
+        //     //向后台发送参数
+        //     $('#formInfo').datagrid('load',pars);
+        // }
+
+    </script>
+</body>
+</html>

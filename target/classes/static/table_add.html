@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymelraf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.easyui.min.js"></script>
+    <link href="/themes/default/easyui.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/js/my97Date/WdatePicker.js"></script>
+    <!-- 富文本编辑器 -->
+    <link rel="stylesheet" href="/kindeditor/themes/default/default.css" type="text/css"/>
+    <script type="text/javascript" src="/kindeditor/kindeditor-all-min.js"></script>
+    <!--    <script type="text/javascript" src="/kindeditor/lang/zh_CN.js"></script>-->
+</head>
+<body>
+
+<!--    <form action="/addPage" method="post" enctype="multipart/form-data" id="form">-->
+<form enctype="multipart/form-data" id="form">
+    <table>
+        <tr>
+            <td>公示名称：</td>
+            <td><input type="text" name="publicityName" value=""></td>
+        </tr>
+        <tr>
+            <td>标段名称：</td>
+            <td>
+                <div name="bidName" onclick="SaveCheck()">
+                    <input type="checkbox" name="combox" value="1" >标段1
+                    <input type="checkbox" name="combox" value="2">标段2
+                    <input type="checkbox" name="combox" value="3">标段3
+                </div>
+                <input type="hidden" name="bidName" id="bidName">
+            </td>
+        </tr>
+        <tr>
+            <td>公示类型：</td>
+            <td>
+                <select id="publicityType" name="publicityType">
+                    <option value="0"></option>
+                    <option value="1">正常</option>
+                    <option value="2">不正常</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>招标代理项目经理：</td>
+            <td><input type="text" name="bidManager" value=""></td>
+        </tr>
+        <tr>
+            <td>项目经理身份证号：</td>
+            <td><input type="text" name="managerId" id="managerId" value="" onblur="verify()"></td>
+        </tr>
+        <tr>
+            <td>证书编号：</td>
+            <td><input type="text" name="certificateId" value=""></td>
+        </tr>
+        <tr>
+            <td>证书资格：</td>
+            <td><input type="text" name="titleCertificate" value=""></td>
+        </tr>
+        <tr>
+            <td>开标时间：</td>
+            <td>
+                <input type="text" id="openTimeStr" name ="openTimeStr"  class="Wdate" style="float: left;width: 147px;padding-left: 3px;"
+                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" />
+            </td>
+        </tr>
+        <tr>
+            <td>公示开始时间：</td>
+            <td>
+                <input type="text" id="startTimeStr" name ="startTimeStr"  class="Wdate" style="float: left;width: 147px;padding-left: 3px;"
+                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" />
+            </td>
+        </tr>
+        <tr>
+            <td>公示结束时间：</td>
+            <td>
+                <input type="text" id="endTimeStr" name ="endTimeStr"  class="Wdate" style="float: left;width: 147px;padding-left: 3px;"
+                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" />
+            </td>
+        </tr>
+        <tr>
+            <td>委托金额：</td>
+            <td><input type="text" name="entrustMoney" value=""></td>
+        </tr>
+        <tr>
+            <td>否决投标单位及理由：</td>
+            <td>
+                <div class="col-md-10 data editer" onblur="test()">
+                    <textarea name="content" style="width:800px;height:400px;visibility:hidden;"></textarea>
+                </div>
+                <input type="hidden" name="publicityContent" id="publicityContent">
+            </td>
+        </tr>
+        <tr>
+            <td>附件上传：</td>
+            <td><input type="file" name="myFile" id="myFile" onchange="uploadFile()"></td>
+        </tr>
+        <tr>
+            <td>已上传附件：</td>
+            <td id="list">
+<!--                <input type="hidden" name="fileId" id="fileId">-->
+            </td>
+        </tr>
+        <tr>
+            <td><input type="button" value="提交" onclick="sub()"></td>
+        </tr>
+    </table>
+</form>
+
+<script>
+
+    var ids = "";
+    var api = frameElement.api;
+    W = api.opener;
+
+    var editor;
+    KindEditor.ready(function (K) {
+        editor = K.create('textarea[name="content"]', {
+            //否允许浏览服务器已上传文件,默认是false
+            allowFileManager: true
+        });
+    });
+
+    function verify() {
+        let id = $("#managerId").val();
+        let verify = /^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/;
+        if(verify.test(id)){
+            console.log("正确");
+        }else{
+            alert("请正确输入身份证号！");
+            $("#managerId").val("");
+        }
+    }
+
+    function test() {
+        let content = editor.html();
+        console.log(content);
+        $("#publicityContent").val(content);
+    }
+
+    var SaveCheck = function(){
+        let arry = new Array();
+        //循环所有选中的值
+        $('input[name="combox"]:checked').each(function(index, element) {
+            //追加到数组中
+            arry.push($(this).val());
+        });
+        //将数组元素连接起来转化为字符串
+        let arrystr = arry.join(',');
+        //输出到控制台
+        $("#bidName").val(arrystr);
+        console.log("选中值："+ arrystr);
+    }
+
+    function sub() {
+        // var content = editor.html();
+        let content = editor.html();
+        // console.log(content);
+        $("#publicityContent").val(content);
+        console.log("sub");
+        let formData = new FormData(document.getElementById('form'));
+        console.log(formData);
+        $.ajax({
+            type : "POST",
+            url : "/addPage",
+            data : formData,
+            async: false,//同步上传
+            cache: false,//上传文件无需缓存
+            processData: false,  // 不处理数据
+            contentType: false, // 不设置内容类型
+            //请求成功
+            success : function(result) {
+                if(result.status == "ok"){
+                    console.log("成功");
+                    W.refreshTable();
+                    api.close();
+                }else{
+                    console.log("错误");
+                }
+            },
+            //请求失败，包含具体的错误信息
+            error : function(e){
+            }
+        });
+    }
+
+    function uploadFile() {
+
+        // $('#myFile').val("");
+        var formdata = new FormData();
+        formdata.append("myFile", $('#myFile')[0].files[0]);
+
+            let myajax = $.ajax({
+                type : "POST",
+                url : "/uploadFile",
+                data : formdata,
+                async: false,//同步上传
+                cache: false,//上传文件无需缓存
+                processData: false,  // 不处理数据
+                contentType: false, // 不设置内容类型
+                //请求成功
+                success : function(result) {
+                    console.log(result);
+                    if(ids === ""){
+                        ids = result.data.fileId;
+                    }else{
+                        ids = ids + "," +result.data.fileId;
+                    }
+                },
+                //请求失败，包含具体的错误信息
+                error : function(e){
+                }
+            });
+
+        $.when(myajax).done(function () {
+            //将上传的文件id拼接
+            // ids = ids + "," +$("#fileId").val();
+            formdata.append("fileIds", ids);
+            console.log(ids);
+            $.ajax({
+                type : "POST",
+                url : "/getFilePage",
+                data : formdata,
+                async: false,//同步上传
+                cache: false,//上传文件无需缓存
+                processData: false,  // 不处理数据
+                contentType: false, // 不设置内容类型
+                //请求成功
+                success : function(result) {
+                    console.log(result);
+                    $("#list").empty();
+                    for (let i=0;i<result.rows.length;i++){
+                        $("#list").append('                    <div>' +
+                            '                        <span>'+ result.rows[i].fileName +'</span>' +
+                            '                        <input type="button" value="下载">' +
+                            '                            <input type="button" value="删除">' +
+                            '                            </div>');
+                    }
+                },
+                //请求失败，包含具体的错误信息
+                error : function(e){
+                }
+            });
+        });
+
+    }
+</script>
+
+</body>
+</html>
