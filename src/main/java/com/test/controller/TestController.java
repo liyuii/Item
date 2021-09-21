@@ -64,8 +64,8 @@ public class TestController {
      */
     @PostMapping("/addPage")
     @ResponseBody
-    public Map<String,Object> addPage(Form form,MultipartFile myFile){
-        tableService.addTable(form,myFile);
+    public Map<String,Object> addPage(Form form,String fileIds){
+        tableService.addTable(form,fileIds);
         Map<String,Object> map = new HashMap<>();
         map.put("status","ok");
         return map;

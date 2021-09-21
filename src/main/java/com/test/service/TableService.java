@@ -31,7 +31,8 @@ public interface TableService {
      *
      * @return
      */
-    public void addTable(Form form,MultipartFile myFile);
+//    public void addTable(Form form,MultipartFile myFile);
+    public void addTable(Form form,String files);
 
 
     /**

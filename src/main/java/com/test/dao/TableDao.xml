@@ -20,7 +20,6 @@
         <result column="PUBLICITY_ENDTIME" property="publicityEndTime" jdbcType="DATE" />
         <result column="ENTRUST_MONEY" property="entrustMoney" jdbcType="DECIMAL" />
         <result column="PUBLICITY_CONTENT" property="publicityContent" jdbcType="VARCHAR" />
-<!--        <result column="FORM_FILE" property="formFile" jdbcType="VARCHAR" />-->
         <result column="OPENTIME_STR" property="openTimeStr" jdbcType="VARCHAR" />
         <result column="STARTTIME_STR" property="startTimeStr" jdbcType="VARCHAR" />
         <result column="ENDTIME_STR" property="endTimeStr" jdbcType="VARCHAR" />
@@ -46,7 +45,6 @@
                   #{publicityEndTime,jdbcType=DATE},
                   #{entrustMoney,jdbcType=DECIMAL},
                   #{publicityContent,jdbcType=VARCHAR},
---                   #{formFile,jdbcType=VARCHAR},
                   #{openTimeStr,jdbcType=VARCHAR},
                   #{startTimeStr,jdbcType=VARCHAR},
                   #{endTimeStr,jdbcType=VARCHAR}

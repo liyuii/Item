@@ -70,41 +70,60 @@ public class TableServiceImpl implements TableService {
 
     @Override
     @Transactional
-    public void addTable(Form form1, MultipartFile myFile) {
+    public void addTable(Form form,String files) {
 
-        Form form = fixDate(form1);
+        Form newForm = fixDate(form);
 
         //1.设置属性
         form.setFormId(UUIDUtil.generateUuid());
+        tableDao.addTable(newForm);
 
-        //2.保存文件搭配数据库
-        if(!StringUtils.isEmpty(myFile.getOriginalFilename())){
-            File file = new File();
-            file.setFileId(UUIDUtil.generateUuid());
-//        file.setFileName(file.getFileId() + myFile.getOriginalFilename());
-//        file.setFilePath(PATH + file.getFileName());
-            file.setFileName(myFile.getOriginalFilename());
-            file.setFilePath(FileUtil.getPath(file.getFileId(),file.getFileName()));
-
-            file.setFormId(form.getFormId());
-            fileDao.saveFile(file);
-
-            //3.在表单中加入文件名
-//            form.setFormFile(file.getFileName());
-
-            //4.存储文件到磁盘
-            java.io.File file1 = new java.io.File(file.getFilePath());
-            try {
-                if(!file1.getParentFile().exists()){
-                    file1.getParentFile().mkdirs();
-                }
-                myFile.transferTo(file1);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        //2.文件中设置表单id
+        String[] splits = files.split(",");
+        for(String id:splits){
+            File fileById = fileDao.getFileById(id);
+            fileById.setFormId(form.getFormId());
+            fileDao.updateFile(fileById);
         }
-        tableDao.addTable(form);
     }
+
+//    @Override
+//    @Transactional
+//    public void addTable(Form form1, MultipartFile myFile) {
+//
+//        Form form = fixDate(form1);
+//
+//        //1.设置属性
+//        form.setFormId(UUIDUtil.generateUuid());
+//
+//        //2.保存文件搭配数据库
+//        if(!StringUtils.isEmpty(myFile.getOriginalFilename())){
+//            File file = new File();
+//            file.setFileId(UUIDUtil.generateUuid());
+////        file.setFileName(file.getFileId() + myFile.getOriginalFilename());
+////        file.setFilePath(PATH + file.getFileName());
+//            file.setFileName(myFile.getOriginalFilename());
+//            file.setFilePath(FileUtil.getPath(file.getFileId(),file.getFileName()));
+//
+//            file.setFormId(form.getFormId());
+//            fileDao.saveFile(file);
+//
+//            //3.在表单中加入文件名
+////            form.setFormFile(file.getFileName());
+//
+//            //4.存储文件到磁盘
+//            java.io.File file1 = new java.io.File(file.getFilePath());
+//            try {
+//                if(!file1.getParentFile().exists()){
+//                    file1.getParentFile().mkdirs();
+//                }
+//                myFile.transferTo(file1);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        tableDao.addTable(form);
+//    }
 
     @Override
     @Transactional

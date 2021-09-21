@@ -99,7 +99,7 @@
         <tr>
             <td>已上传附件：</td>
             <td id="list">
-<!--                <input type="hidden" name="fileId" id="fileId">-->
+                <input type="hidden" name="fileIds" id="fileIds">
             </td>
         </tr>
         <tr>
@@ -160,6 +160,7 @@
         $("#publicityContent").val(content);
         console.log("sub");
         let formData = new FormData(document.getElementById('form'));
+        formData.append("fileIds", ids);
         console.log(formData);
         $.ajax({
             type : "POST",

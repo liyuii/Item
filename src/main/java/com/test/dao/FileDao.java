@@ -32,4 +32,6 @@ public interface FileDao {
 //    void upload(File file);
 
     File getFileById(String fileId);
+
+    void updateFile(File file);
 }

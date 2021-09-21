@@ -15,4 +15,5 @@ public interface FileService {
     void download(String fileId);
 
     List<File> getFilePage(String fileIds);
+
 }
